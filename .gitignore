@@ -1,0 +1,32 @@
+# bağımlılıklar
+/node_modules
+
+# derleme çıktıları
+/.next/
+/out/
+/build
+*.tsbuildinfo
+next-env.d.ts
+
+# test çıktıları
+/coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/tests/.tmp/
+
+# ortam değişkenleri (gizli anahtarlar asla depoya girmez)
+.env
+.env.*
+!.env.example
+
+# yerel veritabanları ve yüklenen dosyalar
+/prisma/*.db
+/prisma/*.db-journal
+/storage/
+
+# işletim sistemi / editör
+.DS_Store
+Thumbs.db
+*.log
