@@ -8,6 +8,7 @@ import { useId, useState, useTransition } from "react";
 import { addToCartAction } from "@/app/actions/cart";
 import { useCart } from "@/components/cart/CartProvider";
 import { formatTRY } from "@/lib/money";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { cx } from "@/lib/utils";
 
 export type KitItem = {
@@ -33,7 +34,7 @@ function BuyNow({ kit }: { kit: KitItem }) {
   const { setCartCount } = useCart();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  if (!kit.variantId || !kit.available) return null;
+  if (STATIC_SITE || !kit.variantId || !kit.available) return null;
   return (
     <div>
       <button

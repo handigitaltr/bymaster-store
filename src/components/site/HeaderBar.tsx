@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { useCart } from "@/components/cart/CartProvider";
 import { Dialog } from "@/components/ui/Dialog";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { cx } from "@/lib/utils";
 import { MAIN_LINKS, type NavData } from "./nav-types";
 import { SearchDialog } from "./SearchDialog";
@@ -41,7 +42,7 @@ export function HeaderBar({ nav }: { nav: NavData }) {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+      if (!STATIC_SITE && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         setSearchOpen(true);
       }
@@ -133,41 +134,46 @@ export function HeaderBar({ nav }: { nav: NavData }) {
           </nav>
 
           <div className="flex items-center gap-0.5 lg:ml-auto">
-            <button
-              type="button"
-              onClick={() => setSearchOpen(true)}
-              className="grid size-11 place-content-center rounded-full text-cocoa-800 hover:bg-cream-300"
-              aria-label="Ara"
-            >
-              <Search className="size-[1.3rem]" />
-            </button>
-            <Link
-              href="/favoriler"
-              className="hidden size-11 place-content-center rounded-full text-cocoa-800 hover:bg-cream-300 sm:grid"
-              aria-label="Favorilerim"
-            >
-              <Heart className="size-[1.3rem]" />
-            </Link>
-            <Link
-              href={me?.user ? (me.user.isAdmin ? "/yonetim" : "/hesabim") : "/giris"}
-              className="hidden h-11 items-center gap-2 rounded-full px-3 text-cocoa-800 hover:bg-cream-300 sm:inline-flex"
-              aria-label={me?.user ? "Hesabım" : "Giriş yap"}
-            >
-              <UserRound className="size-[1.3rem]" />
-              <span className="hidden text-sm font-bold xl:inline">{me?.user ? me.user.firstName : "Giriş"}</span>
-            </Link>
-            <Link
-              href="/sepet"
-              className="relative grid size-11 place-content-center rounded-full text-cocoa-800 hover:bg-cream-300"
-              aria-label={`Sepet, ${cartCount} ürün`}
-            >
-              <ShoppingBag className="size-[1.3rem]" />
-              {cartCount > 0 ? (
-                <span className="absolute right-0.5 top-0.5 grid min-w-5 place-content-center rounded-full bg-bordeaux-600 px-1 text-[0.65rem] font-extrabold leading-5 text-white tabular-nums">
-                  {cartCount > 99 ? "99+" : cartCount}
-                </span>
-              ) : null}
-            </Link>
+            {/* Statik vitrinde arama, favoriler, hesap ve sepet sunucu gerektirdiği için yoktur */}
+            {STATIC_SITE ? null : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen(true)}
+                  className="grid size-11 place-content-center rounded-full text-cocoa-800 hover:bg-cream-300"
+                  aria-label="Ara"
+                >
+                  <Search className="size-[1.3rem]" />
+                </button>
+                <Link
+                  href="/favoriler"
+                  className="hidden size-11 place-content-center rounded-full text-cocoa-800 hover:bg-cream-300 sm:grid"
+                  aria-label="Favorilerim"
+                >
+                  <Heart className="size-[1.3rem]" />
+                </Link>
+                <Link
+                  href={me?.user ? (me.user.isAdmin ? "/yonetim" : "/hesabim") : "/giris"}
+                  className="hidden h-11 items-center gap-2 rounded-full px-3 text-cocoa-800 hover:bg-cream-300 sm:inline-flex"
+                  aria-label={me?.user ? "Hesabım" : "Giriş yap"}
+                >
+                  <UserRound className="size-[1.3rem]" />
+                  <span className="hidden text-sm font-bold xl:inline">{me?.user ? me.user.firstName : "Giriş"}</span>
+                </Link>
+                <Link
+                  href="/sepet"
+                  className="relative grid size-11 place-content-center rounded-full text-cocoa-800 hover:bg-cream-300"
+                  aria-label={`Sepet, ${cartCount} ürün`}
+                >
+                  <ShoppingBag className="size-[1.3rem]" />
+                  {cartCount > 0 ? (
+                    <span className="absolute right-0.5 top-0.5 grid min-w-5 place-content-center rounded-full bg-bordeaux-600 px-1 text-[0.65rem] font-extrabold leading-5 text-white tabular-nums">
+                      {cartCount > 99 ? "99+" : cartCount}
+                    </span>
+                  ) : null}
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
@@ -236,13 +242,15 @@ export function HeaderBar({ nav }: { nav: NavData }) {
 
       <Dialog open={mobileOpen} onClose={() => setMobileOpen(false)} title="Menü" variant="left">
         <div className="space-y-6 p-5">
-          <form action="/arama" role="search" className="flex items-center gap-2 rounded-full border border-cocoa-800/15 bg-white px-4">
-            <Search className="size-4 text-cocoa-400" aria-hidden="true" />
-            <label htmlFor="mobile-search" className="sr-only">
-              Ürün ara
-            </label>
-            <input id="mobile-search" name="q" type="search" placeholder="Ürün ara…" className="h-11 w-full bg-transparent text-base focus:outline-none" />
-          </form>
+          {STATIC_SITE ? null : (
+            <form action="/arama" role="search" className="flex items-center gap-2 rounded-full border border-cocoa-800/15 bg-white px-4">
+              <Search className="size-4 text-cocoa-400" aria-hidden="true" />
+              <label htmlFor="mobile-search" className="sr-only">
+                Ürün ara
+              </label>
+              <input id="mobile-search" name="q" type="search" placeholder="Ürün ara…" className="h-11 w-full bg-transparent text-base focus:outline-none" />
+            </form>
+          )}
           <nav aria-label="Mobil menü" className="space-y-1">
             <details className="group" open>
               <summary className="flex cursor-pointer list-none items-center justify-between py-3 font-display text-2xl text-cocoa-900">
@@ -276,24 +284,26 @@ export function HeaderBar({ nav }: { nav: NavData }) {
               </Link>
             ))}
           </nav>
-          <div className="grid grid-cols-2 gap-2.5 border-t border-cocoa-800/10 pt-5 text-sm font-bold">
-            <Link href={me?.user ? "/hesabim" : "/giris"} className="btn btn-outline btn-sm">
-              {me?.user ? "Hesabım" : "Giriş yap"}
-            </Link>
-            <Link href="/favoriler" className="btn btn-outline btn-sm">
-              Favorilerim
-            </Link>
-            <Link href="/siparis-takip" className="btn btn-outline btn-sm">
-              Sipariş takibi
-            </Link>
-            <Link href="/iletisim" className="btn btn-outline btn-sm">
-              İletişim
-            </Link>
-          </div>
+          {STATIC_SITE ? null : (
+            <div className="grid grid-cols-2 gap-2.5 border-t border-cocoa-800/10 pt-5 text-sm font-bold">
+              <Link href={me?.user ? "/hesabim" : "/giris"} className="btn btn-outline btn-sm">
+                {me?.user ? "Hesabım" : "Giriş yap"}
+              </Link>
+              <Link href="/favoriler" className="btn btn-outline btn-sm">
+                Favorilerim
+              </Link>
+              <Link href="/siparis-takip" className="btn btn-outline btn-sm">
+                Sipariş takibi
+              </Link>
+              <Link href="/iletisim" className="btn btn-outline btn-sm">
+                İletişim
+              </Link>
+            </div>
+          )}
         </div>
       </Dialog>
 
-      <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
+      {STATIC_SITE ? null : <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />}
     </>
   );
 }

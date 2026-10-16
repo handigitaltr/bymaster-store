@@ -8,6 +8,7 @@ import { Price } from "@/components/ui/Price";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import type { Availability } from "@/lib/availability";
 import { formatTRY, formatWeight } from "@/lib/money";
+import { STATIC_SALES_NOTE, STATIC_SITE } from "@/lib/site-mode";
 import { cx } from "@/lib/utils";
 import { CompareToggle, FavoriteButton } from "./ListToggles";
 import { StockNotifyForm } from "./StockNotifyForm";
@@ -122,7 +123,11 @@ export function PurchasePanel({
         <p className="font-display text-2xl text-bordeaux-600">Yakında satışta</p>
       )}
 
-      {purchasable ? (
+      {STATIC_SITE ? (
+        <div ref={buttonRef} className="rounded-xl bg-cream-200 px-4 py-3 text-sm font-semibold text-cocoa-700">
+          {STATIC_SALES_NOTE}
+        </div>
+      ) : purchasable ? (
         <div ref={buttonRef} className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <QuantityStepper value={quantity} onChange={setQuantity} min={variant.minQty} max={Math.max(variant.minQty, variant.maxQty)} />
           <div className="flex-1">
@@ -138,15 +143,17 @@ export function PurchasePanel({
       {variant.minQty > 1 ? <p className="text-xs text-cocoa-500">Bu ürün en az {variant.minQty} adet sipariş edilebilir.</p> : null}
 
       <div className="flex items-center gap-5 text-sm">
-        <span className="inline-flex items-center gap-2">
-          <FavoriteButton productId={productId} productName={productName} className="!size-9 !bg-cream-200" />
-          <span className="font-semibold text-cocoa-600">Favori</span>
-        </span>
+        {STATIC_SITE ? null : (
+          <span className="inline-flex items-center gap-2">
+            <FavoriteButton productId={productId} productName={productName} className="!size-9 !bg-cream-200" />
+            <span className="font-semibold text-cocoa-600">Favori</span>
+          </span>
+        )}
         <CompareToggle productId={productId} productName={productName} />
         <span className="ml-auto text-xs text-cocoa-400">Stok kodu: {variant.sku}</span>
       </div>
 
-      {purchasable ? (
+      {purchasable && !STATIC_SITE ? (
         <div
           className={cx(
             "fixed inset-x-0 bottom-0 z-30 border-t border-cocoa-800/10 bg-cream-50/95 p-3 backdrop-blur-md transition-transform duration-300 md:hidden",

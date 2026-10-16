@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { formatTRY } from "@/lib/money";
 import { faqJsonLd, pageMetadata } from "@/lib/seo";
 import { getSettings } from "@/lib/settings";
+import { STATIC_SITE } from "@/lib/site-mode";
 
 export const revalidate = 300;
 
@@ -44,13 +45,15 @@ export default async function FaqPage() {
       <div className="lg:col-span-4">
         <p className="eyebrow">Yardım</p>
         <h1 className="display-lg mt-3 text-cocoa-900">Sıkça sorulan sorular</h1>
-        <p className="mt-4 text-cocoa-600">
-          Aradığınız yanıtı bulamadıysanız{" "}
-          <Link href="/iletisim" className="font-bold text-bordeaux-600 underline">
-            bize yazın
-          </Link>
-          .
-        </p>
+        {STATIC_SITE ? null : (
+          <p className="mt-4 text-cocoa-600">
+            Aradığınız yanıtı bulamadıysanız{" "}
+            <Link href="/iletisim" className="font-bold text-bordeaux-600 underline">
+              bize yazın
+            </Link>
+            .
+          </p>
+        )}
       </div>
       <div className="space-y-12 lg:col-span-8">
         {groups.map((group) => (

@@ -11,6 +11,7 @@ import { PACKAGE_TYPE_LABELS, type PackageType } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { formatTRY, formatWeight, unitPricePerKg } from "@/lib/money";
 import { pageMetadata } from "@/lib/seo";
+import { STATIC_SITE } from "@/lib/site-mode";
 
 export const revalidate = 300;
 
@@ -95,9 +96,13 @@ export default async function ProfessionalPage() {
               Kafelerden pastanelere, yoğun üretim yapan mutfaklardan yeni girişimlere kadar ihtiyaçlarınıza uygun ürünleri keşfedin.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <Link href="/profesyonel/teklif" className="btn btn-lg btn-light">
-                Toplu alım teklifi iste <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
+              {STATIC_SITE ? (
+                <p className="w-full text-sm font-semibold text-caramel-300">Toplu alım teklif formu, online sipariş sistemiyle birlikte açılacak.</p>
+              ) : (
+                <Link href="/profesyonel/teklif" className="btn btn-lg btn-light">
+                  Toplu alım teklifi iste <ArrowRight className="size-4" aria-hidden="true" />
+                </Link>
+              )}
               <a href="#ambalaj-tablosu" className="btn btn-lg btn-outline-light">
                 Ambalaj ve fiyatlar
               </a>
@@ -156,9 +161,11 @@ export default async function ProfessionalPage() {
                         <th scope="col" className="px-4 py-3 text-right font-bold">Fiyat</th>
                         <th scope="col" className="px-4 py-3 text-right font-bold">Kilogram fiyatı</th>
                         <th scope="col" className="px-4 py-3 font-bold">Durum</th>
-                        <th scope="col" className="px-4 py-3">
-                          <span className="sr-only">İşlem</span>
-                        </th>
+                        {STATIC_SITE ? null : (
+                          <th scope="col" className="px-4 py-3">
+                            <span className="sr-only">İşlem</span>
+                          </th>
+                        )}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-cocoa-800/8">
@@ -182,11 +189,13 @@ export default async function ProfessionalPage() {
                               <td className="px-4 py-3">
                                 <AvailabilityBadge availability={availability} />
                               </td>
-                              <td className="w-36 px-4 py-2">
-                                {isPurchasable(availability) && variant.priceKurus > 0 ? (
-                                  <AddToCartButton appearance="compact" variantId={variant.id} quantity={variant.minOrderQty} productName={product.name} priceKurus={variant.priceKurus} label="Ekle" />
-                                ) : null}
-                              </td>
+                              {STATIC_SITE ? null : (
+                                <td className="w-36 px-4 py-2">
+                                  {isPurchasable(availability) && variant.priceKurus > 0 ? (
+                                    <AddToCartButton appearance="compact" variantId={variant.id} quantity={variant.minOrderQty} productName={product.name} priceKurus={variant.priceKurus} label="Ekle" />
+                                  ) : null}
+                                </td>
+                              )}
                             </tr>
                           );
                         }),
@@ -206,20 +215,22 @@ export default async function ProfessionalPage() {
         </div>
       </section>
 
-      <section className="bg-cocoa-800 py-16 text-cream-50">
-        <div className="container-page flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="font-display text-3xl">Düzenli alımlar için teklif alın.</p>
-            <p className="mt-2 max-w-xl text-cream-300">
-              Ürün ve miktarlarınızı iletin; talebiniz değerlendirilerek size dönüş yapılsın. Kayıtlı işletme hesaplarına özel fiyat listesi
-              tanımlanabilir; özel fiyatlar giriş yaptığınızda sepette uygulanır.
-            </p>
+      {STATIC_SITE ? null : (
+        <section className="bg-cocoa-800 py-16 text-cream-50">
+          <div className="container-page flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="font-display text-3xl">Düzenli alımlar için teklif alın.</p>
+              <p className="mt-2 max-w-xl text-cream-300">
+                Ürün ve miktarlarınızı iletin; talebiniz değerlendirilerek size dönüş yapılsın. Kayıtlı işletme hesaplarına özel fiyat listesi
+                tanımlanabilir; özel fiyatlar giriş yaptığınızda sepette uygulanır.
+              </p>
+            </div>
+            <Link href="/profesyonel/teklif" className="btn btn-lg btn-light flex-none">
+              Teklif formu <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
           </div>
-          <Link href="/profesyonel/teklif" className="btn btn-lg btn-light flex-none">
-            Teklif formu <ArrowRight className="size-4" aria-hidden="true" />
-          </Link>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

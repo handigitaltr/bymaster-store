@@ -4,11 +4,14 @@ import { CategoryTabs, PostGrid } from "@/components/blog/PostList";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { getBlogCategories, listPosts } from "@/lib/blog";
 import { pageMetadata } from "@/lib/seo";
+import { STATIC_SITE } from "@/lib/site-mode";
 
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-  return [];
+  // Tam sitede sayfalar ilk istekte üretilir (ISR); statik vitrinde (GitHub Pages) hepsi derleme anında üretilir
+  if (!STATIC_SITE) return [];
+  return (await getBlogCategories()).map((category) => ({ slug: category.slug }));
 }
 
 type Props = { params: Promise<{ slug: string }> };

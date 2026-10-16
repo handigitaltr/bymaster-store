@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { formatTRY } from "@/lib/money";
+import { STATIC_SITE } from "@/lib/site-mode";
 
 export type PackagingRow = {
   categorySlug: string;
@@ -30,9 +31,11 @@ export function ProSection({ rows }: { rows: PackagingRow[] }) {
               Profesyonel Ürünleri İncele
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
             </Link>
-            <Link href="/profesyonel/teklif" className="btn btn-lg btn-outline-light">
-              Toptan Satış İçin İletişime Geç
-            </Link>
+            {STATIC_SITE ? null : (
+              <Link href="/profesyonel/teklif" className="btn btn-lg btn-outline-light">
+                Toptan Satış İçin İletişime Geç
+              </Link>
+            )}
           </div>
           <div className="relative mt-12 hidden aspect-[16/10] overflow-hidden rounded-[1.4rem] lg:block">
             <Image

@@ -4,9 +4,10 @@ import Link from "next/link";
 import { newsletterAction, type FormState } from "@/app/actions/forms";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { NEWSLETTER_CONSENT_TEXT } from "@/lib/consents";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { useActionForm } from "@/lib/use-action-form";
 
-export function NewsletterForm({ kvkkHref }: { kvkkHref: string | null }) {
+function NewsletterFormInner({ kvkkHref }: { kvkkHref: string | null }) {
   const { state, formAction: action, onSubmit } = useActionForm<FormState>(newsletterAction, null);
 
   if (state?.ok) {
@@ -57,4 +58,9 @@ export function NewsletterForm({ kvkkHref }: { kvkkHref: string | null }) {
       {state?.message && !state.ok ? <p className="text-sm font-semibold text-caramel-300">{state.message}</p> : null}
     </form>
   );
+}
+
+/** Statik vitrinde (GitHub Pages) sunucu gerektirdiği için gösterilmez */
+export function NewsletterForm(props: React.ComponentProps<typeof NewsletterFormInner>) {
+  return STATIC_SITE ? null : <NewsletterFormInner {...props} />;
 }

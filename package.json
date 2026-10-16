@@ -21,7 +21,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "admin:create": "tsx scripts/create-admin.ts",
     "images:prepare": "tsx scripts/prepare-images.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "pages:build": "node scripts/build-pages.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

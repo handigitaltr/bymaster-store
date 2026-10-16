@@ -7,6 +7,7 @@ import { browseCatalog } from "@/lib/catalog";
 import { parseCatalogParams } from "@/lib/catalog-params";
 import { db } from "@/lib/db";
 import { pageMetadata } from "@/lib/seo";
+import { STATIC_SITE } from "@/lib/site-mode";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -45,7 +46,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const { slug } = await params;
   const category = await getCategory(slug);
   if (!category) notFound();
-  const catalogParams = parseCatalogParams(await searchParams);
+  const catalogParams = parseCatalogParams(STATIC_SITE ? {} : await searchParams);
   const result = await browseCatalog({
     categorySlug: category.slug,
     flavor: catalogParams.lezzet,
@@ -54,6 +55,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     inStock: catalogParams.stok,
     sort: catalogParams.sirala,
     page: catalogParams.sayfa,
+    pageSize: STATIC_SITE ? 500 : undefined,
   });
 
   return (

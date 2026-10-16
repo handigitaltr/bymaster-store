@@ -207,7 +207,7 @@ function sauce(input: {
     primaryCategory: input.primary ?? "waffle-soslari",
     categories: input.categories,
     shortDescription: input.short,
-    description: `${input.name}; waffle başta olmak üzere krep, pankek ve dondurma sunumlarında kullanılmak üzere 10 kg kova ambalajda sunulur.${input.extra ? ` ${input.extra}` : ""}\n\n10 kg'lık kova ambalaj, sosu yoğun kullanan kafe, pastane ve tatlı dükkânları için uygundur. Toplu alım talepleriniz için teklif formunu kullanabilirsiniz.`,
+    description: `${input.name}; waffle başta olmak üzere krep, pankek ve dondurma sunumlarında kullanılmak üzere 10 kg kova ambalajda sunulur.${input.extra ? ` ${input.extra}` : ""}\n\n10 kg'lık kova ambalaj, sosu yoğun kullanan kafe, pastane ve tatlı dükkânları için uygundur.`,
     usageAreasText: "Waffle, krep, pankek, dondurma ve churros sunumları",
     usageTips: SAUCE_TIPS,
     accentColor: input.accent,

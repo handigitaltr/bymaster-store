@@ -30,3 +30,6 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 *.log
+
+# GitHub Pages statik vitrin derlemesi (scripts/build-pages.mjs)
+/.pages-build/

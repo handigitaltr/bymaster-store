@@ -10,16 +10,21 @@ import { Markdown } from "@/components/content/Markdown";
 import { MiniProductRow } from "@/components/product/MiniProductRow";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { JsonLd } from "@/components/ui/JsonLd";
-import { getPost, getRelatedPosts, splitContent } from "@/lib/blog";
+import { getPost, getRelatedPosts, PUBLISHED_POST, splitContent } from "@/lib/blog";
 import { getProductsBySlugs } from "@/lib/catalog";
 import { BLOG_POST_TYPE_LABELS } from "@/lib/constants";
+import { db } from "@/lib/db";
 import { articleJsonLd, pageMetadata, recipeJsonLd } from "@/lib/seo";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { formatDate, lines } from "@/lib/text";
 
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-  return [];
+  // Tam sitede sayfalar ilk istekte üretilir (ISR); statik vitrinde (GitHub Pages) hepsi derleme anında üretilir
+  if (!STATIC_SITE) return [];
+  const posts = await db.blogPost.findMany({ where: PUBLISHED_POST(), select: { slug: true } });
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 type Props = { params: Promise<{ slug: string }> };
@@ -171,7 +176,7 @@ export default async function PostPage({ params }: Props) {
           <aside className="lg:col-span-3 lg:col-start-10" aria-labelledby="tarif-urunleri">
             <div className="space-y-5 rounded-[1.4rem] bg-cocoa-900 p-6 text-cream-100 lg:sticky lg:top-28">
               <div>
-                <p className="eyebrow eyebrow-light">Tariften sepete</p>
+                <p className="eyebrow eyebrow-light">{STATIC_SITE ? "Tarifin ürünleri" : "Tariften sepete"}</p>
                 <h2 id="tarif-urunleri" className="mt-2 font-display text-2xl text-cream-50">
                   {isRecipe ? "Bu tarifte kullanılan ürünler" : "Yazıda geçen ürünler"}
                 </h2>

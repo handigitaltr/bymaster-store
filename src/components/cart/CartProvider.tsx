@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { AddToCartResult } from "@/app/actions/cart";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { CartDrawer } from "./CartDrawer";
 
 export type Me = { user: { firstName: string; isAdmin: boolean } | null; cartCount: number };
@@ -18,6 +19,7 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 
 async function fetchMe(): Promise<Me | null> {
+  if (STATIC_SITE) return null; // statik vitrinde oturum ve sepet yoktur
   try {
     const response = await fetch("/api/me", { cache: "no-store", credentials: "same-origin" });
     return response.ok ? ((await response.json()) as Me) : null;

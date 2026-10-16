@@ -8,12 +8,16 @@ import { appUrl } from "@/lib/env";
 import { ORDER_PLACEHOLDER_VARS, renderTemplate, sellerVars, shippingVars } from "@/lib/legal";
 import { pageMetadata } from "@/lib/seo";
 import { getSettings } from "@/lib/settings";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { formatDate, stripMarkdown, truncate } from "@/lib/text";
 
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-  return [];
+  // Tam sitede sayfalar ilk istekte üretilir (ISR); statik vitrinde (GitHub Pages) hepsi derleme anında üretilir
+  if (!STATIC_SITE) return [];
+  const pages = await db.page.findMany({ where: { status: "PUBLISHED" }, select: { slug: true } });
+  return pages.map((page) => ({ slug: page.slug }));
 }
 
 type Props = { params: Promise<{ slug: string }> };

@@ -5,9 +5,10 @@ import { LoaderCircle, ShoppingBag } from "lucide-react";
 import { useState, useTransition } from "react";
 import { addManyToCartAction } from "@/app/actions/cart";
 import { useCart } from "@/components/cart/CartProvider";
+import { STATIC_SITE } from "@/lib/site-mode";
 
 /** "Tariften sepete": tarifte kullanılan satılabilir ürünlerin tamamını tek seferde sepete ekler */
-export function AddAllToCart({ variantIds, count }: { variantIds: string[]; count: number }) {
+function AddAllToCartInner({ variantIds, count }: { variantIds: string[]; count: number }) {
   const { setCartCount } = useCart();
   const [pending, start] = useTransition();
   const [result, setResult] = useState<{ added: number; messages: string[] } | null>(null);
@@ -48,4 +49,9 @@ export function AddAllToCart({ variantIds, count }: { variantIds: string[]; coun
       ) : null}
     </div>
   );
+}
+
+/** Statik vitrinde (GitHub Pages) sunucu gerektirdiği için gösterilmez */
+export function AddAllToCart(props: React.ComponentProps<typeof AddAllToCartInner>) {
+  return STATIC_SITE ? null : <AddAllToCartInner {...props} />;
 }

@@ -4,6 +4,8 @@ import { ArrowRight, X } from "lucide-react";
 import { ProductCard } from "@/components/product/ProductCard";
 import type { CatalogPage, Facet } from "@/lib/catalog";
 import { catalogHref, hasActiveFilters, type CatalogParams } from "@/lib/catalog-params";
+import { STATIC_SITE } from "@/lib/site-mode";
+import { cx } from "@/lib/utils";
 import { CompareBar, MobileFilterButton, SortSelect } from "./CatalogControls";
 import { FilterPanel } from "./FilterPanel";
 
@@ -37,27 +39,47 @@ export function CatalogView({
     ...(params.stok ? [{ label: "Stoktakiler", href: catalogHref(basePath, params, { stok: false }) }] : []),
   ];
 
-  const panel = <FilterPanel basePath={basePath} params={params} facets={result.facets} categoryFacet={categoryFacet} />;
+  // Statik vitrinde filtre ve sıralama adres parametresi gerektirdiği için yoktur; kategoriler bağlantı olarak gösterilir
+  const panel = STATIC_SITE ? null : <FilterPanel basePath={basePath} params={params} facets={result.facets} categoryFacet={categoryFacet} />;
 
   return (
     <div className="container-page pb-24">
-      <div className="grid gap-10 lg:grid-cols-[15rem_1fr] xl:grid-cols-[16.5rem_1fr]">
-        <aside className="hidden lg:block" aria-label="Filtreler">
-          <div className="sticky top-28">{panel}</div>
-        </aside>
+      <div className={cx("grid gap-10", !STATIC_SITE && "lg:grid-cols-[15rem_1fr] xl:grid-cols-[16.5rem_1fr]")}>
+        {panel ? (
+          <aside className="hidden lg:block" aria-label="Filtreler">
+            <div className="sticky top-28">{panel}</div>
+          </aside>
+        ) : null}
 
         <div>
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cocoa-800/10 pb-4">
             <p className="text-sm text-cocoa-600" aria-live="polite">
               <strong className="text-cocoa-900 tabular-nums">{result.total}</strong> ürün
             </p>
-            <div className="flex items-center gap-2">
-              <MobileFilterButton activeCount={activeCount}>{panel}</MobileFilterButton>
-              <Suspense fallback={null}>
-                <SortSelect value={params.sirala} />
-              </Suspense>
-            </div>
+            {panel ? (
+              <div className="flex items-center gap-2">
+                <MobileFilterButton activeCount={activeCount}>{panel}</MobileFilterButton>
+                <Suspense fallback={null}>
+                  <SortSelect value={params.sirala} />
+                </Suspense>
+              </div>
+            ) : null}
           </div>
+
+          {STATIC_SITE && categoryFacet?.length ? (
+            <nav aria-label="Kategoriler" className="mt-4 flex flex-wrap gap-2">
+              {categoryFacet.map((category) => (
+                <Link
+                  key={category.value}
+                  href={`/kategori/${category.value}`}
+                  className="inline-flex items-center gap-2 rounded-full border border-cocoa-800/15 px-3.5 py-1.5 text-sm font-semibold text-cocoa-800 hover:border-cocoa-800"
+                >
+                  {category.label}
+                  <span className="text-xs text-cocoa-500 tabular-nums">{category.count}</span>
+                </Link>
+              ))}
+            </nav>
+          ) : null}
 
           {chips.length > 0 ? (
             <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -96,7 +118,7 @@ export function CatalogView({
               </Link>
             </div>
           ) : (
-            <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-3 2xl:grid-cols-4">
+            <ul className={cx("mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-3 2xl:grid-cols-4", STATIC_SITE && "lg:grid-cols-4")}>
               {result.items.map((product, index) => (
                 <li key={product.id}>
                   <ProductCard product={product} priority={index < 3} showCompare sizes="(min-width: 1536px) 20vw, (min-width: 768px) 27vw, 46vw" />

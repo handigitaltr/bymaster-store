@@ -5,6 +5,7 @@ import { InstagramIcon } from "@/components/brand/SocialIcons";
 import { db } from "@/lib/db";
 import { getActiveCategories } from "@/lib/catalog";
 import { getSettings, LEGAL_PAGE_SLUGS } from "@/lib/settings";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { formatPhoneForDisplay } from "@/lib/text";
 import { CookiePreferencesButton } from "./CookieConsent";
 import { NewsletterForm } from "./NewsletterForm";
@@ -32,8 +33,9 @@ export async function SiteFooter() {
     { href: "/sss", label: "Sıkça Sorulan Sorular" },
     { href: pageHref(LEGAL_PAGE_SLUGS.shipping), label: "Kargo ve Teslimat" },
     { href: pageHref(LEGAL_PAGE_SLUGS.returns), label: "İade ve İptal" },
-    { href: "/siparis-takip", label: "Sipariş Takibi" },
-    { href: "/iletisim", label: "İletişim" },
+    // Statik vitrinde sipariş takibi ve iletişim formu (sunucu gerektirir) yoktur
+    { href: STATIC_SITE ? null : "/siparis-takip", label: "Sipariş Takibi" },
+    { href: STATIC_SITE ? null : "/iletisim", label: "İletişim" },
   ].filter((link): link is { href: string; label: string } => Boolean(link.href));
 
   const hasOptionalCookies = Boolean(settings.gaMeasurementId || settings.metaPixelId);
@@ -42,17 +44,19 @@ export async function SiteFooter() {
   return (
     <footer className="grain bg-cocoa-950 text-cream-200">
       <div className="container-page relative">
-        <section aria-labelledby="newsletter-title" className="grid gap-8 border-b border-cream-50/10 py-14 lg:grid-cols-12 lg:items-center lg:py-16">
-          <div className="lg:col-span-5">
-            <p className="eyebrow eyebrow-light mb-3">Lezzet Günlüğü bülteni</p>
-            <h2 id="newsletter-title" className="display-md text-cream-50">
-              Yeni tarifler, sunum fikirleri ve kampanyalar e-postanızda.
-            </h2>
-          </div>
-          <div className="lg:col-span-6 lg:col-start-7">
-            <NewsletterForm kvkkHref={pageHref(LEGAL_PAGE_SLUGS.kvkk)} />
-          </div>
-        </section>
+        {STATIC_SITE ? null : (
+          <section aria-labelledby="newsletter-title" className="grid gap-8 border-b border-cream-50/10 py-14 lg:grid-cols-12 lg:items-center lg:py-16">
+            <div className="lg:col-span-5">
+              <p className="eyebrow eyebrow-light mb-3">Lezzet Günlüğü bülteni</p>
+              <h2 id="newsletter-title" className="display-md text-cream-50">
+                Yeni tarifler, sunum fikirleri ve kampanyalar e-postanızda.
+              </h2>
+            </div>
+            <div className="lg:col-span-6 lg:col-start-7">
+              <NewsletterForm kvkkHref={pageHref(LEGAL_PAGE_SLUGS.kvkk)} />
+            </div>
+          </section>
+        )}
 
         <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-4">
@@ -121,7 +125,7 @@ export async function SiteFooter() {
                 { href: "/tarifler", label: "Tarifler ve İlham" },
                 { href: "/lezzet-dunyasi", label: "Waffle & Tatlı Dünyası" },
                 { href: "/profesyonel", label: "Profesyonellere Özel" },
-                { href: "/profesyonel/teklif", label: "Toplu Alım Teklifi" },
+                ...(STATIC_SITE ? [] : [{ href: "/profesyonel/teklif", label: "Toplu Alım Teklifi" }]),
                 { href: "/hakkimizda", label: "Hakkımızda" },
               ].map((link) => (
                 <li key={link.href}>

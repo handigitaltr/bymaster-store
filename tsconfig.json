@@ -22,5 +22,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],
-  "exclude": ["node_modules", "storage", "test-results", "playwright-report"]
+  "exclude": ["node_modules", "storage", "test-results", "playwright-report", ".pages-build"]
 }

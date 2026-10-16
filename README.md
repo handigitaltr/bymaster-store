@@ -117,7 +117,18 @@ npm run start            # varsayılan port 3000; önüne HTTPS sonlandıran bir
 
 ---
 
-## 6. Testler
+## 6. GitHub Pages: statik vitrin
+
+GitHub Pages yalnızca sabit HTML sunabildiği için tam site (sepet, ödeme, üyelik, yönetim paneli) orada çalışamaz. Bu depo, her `main` gönderiminde GitHub Actions ile bir **statik vitrin** yayınlar: ana sayfa, katalog, ürün detayları, tarifler, Lezzet Dünyası, Profesyonellere Özel ve bilgi sayfaları. Ürünlerde sepet yerine “Online sipariş yakında açılacak.” notu görünür.
+
+- İlk kurulum: depo **Settings → Pages → Build and deployment → Source: “GitHub Actions”**.
+- Yerelde denemek için: `npm run pages:build` (çıktı: `.pages-build/out`).
+- Derleme kaynak kodu değiştirmez: proje `.pages-build/` klasörüne kopyalanır, sunucu gerektiren yollar kopyadan çıkarılır ve veriler tohum betiğiyle ayrı bir veritabanından (`prisma/pages.db`) okunur. Ayrıntılar: `scripts/build-pages.mjs`, `src/lib/site-mode.ts`.
+- Vitrin, ileride kurulacak gerçek alan adıyla yarışmaması için arama motorlarına kapalıdır (`noindex`). Açmak için iş akışında `PAGES_NOINDEX: "false"` tanımlayın.
+
+Satış yapılacak tam site için bölüm 5'teki gibi sunuculu bir barındırma (ör. Railway, Render, VPS) gerekir.
+
+## 7. Testler
 
 ```bash
 npm run typecheck      # TypeScript
@@ -133,7 +144,7 @@ E2E testleri kendi veritabanını (`prisma/e2e.db`) sıfırdan kurar; bu veritab
 
 ---
 
-## 7. Klasör yapısı
+## 8. Klasör yapısı
 
 ```
 prisma/            şema, migration'lar, tohum verisi (seed-data/)

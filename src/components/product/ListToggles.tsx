@@ -2,10 +2,11 @@
 
 import { GitCompareArrows, Heart } from "lucide-react";
 import { useEffect, useState } from "react";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { COMPARE_KEY, COMPARE_MAX, FAVORITES_KEY, useStoredList } from "@/lib/use-stored-list";
 import { cx } from "@/lib/utils";
 
-export function FavoriteButton({ productId, productName, className }: { productId: string; productName: string; className?: string }) {
+function FavoriteButtonInner({ productId, productName, className }: { productId: string; productName: string; className?: string }) {
   const favorites = useStoredList(FAVORITES_KEY);
   const active = favorites.has(productId);
   return (
@@ -24,7 +25,7 @@ export function FavoriteButton({ productId, productName, className }: { productI
   );
 }
 
-export function CompareToggle({ productId, productName, className }: { productId: string; productName: string; className?: string }) {
+function CompareToggleInner({ productId, productName, className }: { productId: string; productName: string; className?: string }) {
   const compare = useStoredList(COMPARE_KEY, COMPARE_MAX);
   const [notice, setNotice] = useState<string | null>(null);
   const active = compare.has(productId);
@@ -63,4 +64,14 @@ export function CompareToggle({ productId, productName, className }: { productId
       ) : null}
     </span>
   );
+}
+
+/** Statik vitrinde (GitHub Pages) sunucu gerektirdiği için gösterilmez */
+export function FavoriteButton(props: React.ComponentProps<typeof FavoriteButtonInner>) {
+  return STATIC_SITE ? null : <FavoriteButtonInner {...props} />;
+}
+
+/** Statik vitrinde (GitHub Pages) sunucu gerektirdiği için gösterilmez */
+export function CompareToggle(props: React.ComponentProps<typeof CompareToggleInner>) {
+  return STATIC_SITE ? null : <CompareToggleInner {...props} />;
 }

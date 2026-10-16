@@ -18,6 +18,7 @@ import { db } from "@/lib/db";
 import { formatTRY, formatWeight, unitPricePerKg } from "@/lib/money";
 import { pageMetadata, productJsonLd } from "@/lib/seo";
 import { getSettings, LEGAL_PAGE_SLUGS } from "@/lib/settings";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { truncate } from "@/lib/text";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -25,7 +26,10 @@ type Props = { params: Promise<{ slug: string }> };
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-  return [];
+  // Tam sitede sayfalar ilk istekte üretilir (ISR); statik vitrinde (GitHub Pages) hepsi derleme anında üretilir
+  if (!STATIC_SITE) return [];
+  const products = await db.product.findMany({ where: { status: "ACTIVE" }, select: { slug: true } });
+  return products.map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -177,7 +181,7 @@ export default async function ProductPage({ params }: Props) {
                   <span>{shippingText.join(" ")}</span>
                 </p>
               ) : null}
-              {isPro ? (
+              {isPro && !STATIC_SITE ? (
                 <Link
                   href={`/profesyonel/teklif?urun=${primaryVariant?.id ?? ""}`}
                   className="group flex items-center gap-3 rounded-xl border border-cocoa-800/12 p-4 text-sm text-cocoa-700 hover:border-cocoa-800/35"

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
-import { appUrl, env } from "@/lib/env";
+import { absoluteUrl, appUrl, env } from "@/lib/env";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "tr_TR",
     siteName: "ByMaster",
-    images: [{ url: "/images/og-default.jpg", width: 1200, height: 630, alt: "ByMaster — Professional Pastry Products" }],
+    images: [{ url: absoluteUrl("/images/og-default.jpg"), width: 1200, height: 630, alt: "ByMaster — Professional Pastry Products" }],
   },
   twitter: { card: "summary_large_image" },
   robots: env.NOINDEX ? { index: false, follow: false } : { index: true, follow: true },

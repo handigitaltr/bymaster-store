@@ -4,10 +4,11 @@ import { Check, LoaderCircle, Plus, ShoppingBag } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 import { addToCartAction } from "@/app/actions/cart";
 import { track } from "@/lib/analytics";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { cx } from "@/lib/utils";
 import { useCart } from "./CartProvider";
 
-export function AddToCartButton({
+function AddToCartButtonInner({
   variantId,
   quantity = 1,
   productName,
@@ -102,4 +103,9 @@ export function AddToCartButton({
       ) : null}
     </div>
   );
+}
+
+/** Statik vitrinde (GitHub Pages) sunucu gerektirdiği için gösterilmez */
+export function AddToCartButton(props: React.ComponentProps<typeof AddToCartButtonInner>) {
+  return STATIC_SITE ? null : <AddToCartButtonInner {...props} />;
 }

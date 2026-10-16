@@ -2,9 +2,11 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { PACKAGE_TYPE_LABELS, type PackageType } from "@/lib/constants";
 import { formatWeight } from "@/lib/money";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { lines } from "@/lib/text";
 
 function Missing() {
+  if (STATIC_SITE) return <p className="text-cocoa-500">Bu bilgi henüz eklenmedi.</p>;
   return (
     <p className="text-cocoa-500">
       Bu bilgi henüz eklenmedi. Satın almadan önce bilgi almak için{" "}
@@ -186,20 +188,23 @@ export function ProductInfo({
         </Section>
       ) : null}
 
-      <Section title="Teslimat ve iade">
-        <div className="space-y-2">
-          {shippingText.length ? shippingText.map((text) => <p key={text}>{text}</p>) : <p>Teslimat bilgisi ödeme adımında gösterilir.</p>}
-          {returnsHref ? (
-            <p>
-              İade ve iptal koşulları için{" "}
-              <Link href={returnsHref} className="font-semibold text-bordeaux-600 underline">
-                ilgili sayfayı
-              </Link>{" "}
-              inceleyebilirsiniz.
-            </p>
-          ) : null}
-        </div>
-      </Section>
+      {/* Statik vitrinde sipariş alınmadığı için teslimat bölümü gösterilmez */}
+      {STATIC_SITE ? null : (
+        <Section title="Teslimat ve iade">
+          <div className="space-y-2">
+            {shippingText.length ? shippingText.map((text) => <p key={text}>{text}</p>) : <p>Teslimat bilgisi ödeme adımında gösterilir.</p>}
+            {returnsHref ? (
+              <p>
+                İade ve iptal koşulları için{" "}
+                <Link href={returnsHref} className="font-semibold text-bordeaux-600 underline">
+                  ilgili sayfayı
+                </Link>{" "}
+                inceleyebilirsiniz.
+              </p>
+            ) : null}
+          </div>
+        </Section>
+      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { db } from "@/lib/db";
 import { showTestModeBanner } from "@/lib/payments/config";
 import { getSettings, LEGAL_PAGE_SLUGS } from "@/lib/settings";
+import { STATIC_SITE } from "@/lib/site-mode";
 
 async function getActiveAnnouncements() {
   const now = new Date();
@@ -40,7 +41,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           TEST MODU — Bu sitedeki ödemeler gerçek değildir ve tahsilat yapılmaz.
         </div>
       ) : null}
-      <AnnouncementBar items={announcements} />
+      {/* Duyurular sipariş ve kargo kampanyalarıyla ilgilidir; statik vitrinde sipariş alınmadığı için gösterilmez */}
+      {STATIC_SITE ? null : <AnnouncementBar items={announcements} />}
       <SiteHeader />
       <main id="icerik" className="min-h-[60vh]">
         {children}

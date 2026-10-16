@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ProductCard } from "@/components/product/ProductCard";
 import type { ProductCardData } from "@/lib/catalog";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { cx } from "@/lib/utils";
 
 type Family = { slug: string; name: string; color: string | null; description: string | null };
@@ -162,19 +164,20 @@ export function FlavorMap({ families, usages, products }: { families: Family[]; 
           <strong className="text-cocoa-900">{results.length}</strong> ürün listeleniyor
         </p>
         <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3">
-          {results.slice(0, 9).map((product) => (
+          {(STATIC_SITE ? results : results.slice(0, 9)).map((product) => (
             <li key={product.id}>
               <ProductCard product={product} sizes="(min-width: 1024px) 18vw, 46vw" />
             </li>
           ))}
         </ul>
-        {results.length > 9 ? (
-          <a
+        {/* Statik vitrinde filtreli katalog adresi çalışmadığından tüm sonuçlar burada listelenir */}
+        {!STATIC_SITE && results.length > 9 ? (
+          <Link
             href={`/urunler?${new URLSearchParams({ ...(family ? { lezzet: family } : {}), ...(usage ? { kullanim: usage } : {}) }).toString()}`}
             className="btn btn-outline mt-8"
           >
             Tüm {results.length} ürünü listede gör
-          </a>
+          </Link>
         ) : null}
       </div>
     </div>

@@ -3,9 +3,10 @@
 import { BellRing } from "lucide-react";
 import { stockNotifyAction, type FormState } from "@/app/actions/forms";
 import { SubmitButton } from "@/components/ui/SubmitButton";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { useActionForm } from "@/lib/use-action-form";
 
-export function StockNotifyForm({ variantId, comingSoon }: { variantId: string; comingSoon: boolean }) {
+function StockNotifyFormInner({ variantId, comingSoon }: { variantId: string; comingSoon: boolean }) {
   const { state, formAction: action, onSubmit } = useActionForm<FormState>(stockNotifyAction, null);
   return (
     <div id="haber-ver" className="scroll-mt-32 rounded-2xl bg-cream-200 p-5">
@@ -41,4 +42,9 @@ export function StockNotifyForm({ variantId, comingSoon }: { variantId: string; 
       <p className="mt-2 text-xs text-cocoa-500">E-posta adresiniz yalnızca bu bildirim için kullanılır.</p>
     </div>
   );
+}
+
+/** Statik vitrinde (GitHub Pages) sunucu gerektirdiği için gösterilmez */
+export function StockNotifyForm(props: React.ComponentProps<typeof StockNotifyFormInner>) {
+  return STATIC_SITE ? null : <StockNotifyFormInner {...props} />;
 }

@@ -9,6 +9,7 @@ import { useCart } from "@/components/cart/CartProvider";
 import { productTint } from "@/components/product/ProductCard";
 import type { ProductCardData } from "@/lib/catalog";
 import { formatTRY } from "@/lib/money";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { cx } from "@/lib/utils";
 import { DessertIllustration, type DessertKind } from "./DessertIllustration";
 
@@ -149,22 +150,24 @@ export function PresentationLab({ products }: { products: ProductCardData[] }) {
               <p className="mt-3 text-sm text-cream-300">
                 Seçilen ürünlerin ambalaj fiyatları toplamı: <strong className="tabular-nums text-cream-50">{formatTRY(total)}</strong>
               </p>
-              <button
-                type="button"
-                className="btn btn-light mt-4"
-                disabled={pending || selection.filter(isBuyable).length === 0}
-                onClick={() =>
-                  start(async () => {
-                    const ids = selection.filter(isBuyable).map((p) => p.variant!.id);
-                    const result = await addManyToCartAction(ids);
-                    setCartCount(result.count);
-                    setMessage(result.added > 0 ? `${result.added} ürün sepetinize eklendi.` : result.messages.join(" "));
-                  })
-                }
-              >
-                {pending ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : <ShoppingBag className="size-4" aria-hidden="true" />}
-                Seçimleri sepete ekle
-              </button>
+              {STATIC_SITE ? null : (
+                <button
+                  type="button"
+                  className="btn btn-light mt-4"
+                  disabled={pending || selection.filter(isBuyable).length === 0}
+                  onClick={() =>
+                    start(async () => {
+                      const ids = selection.filter(isBuyable).map((p) => p.variant!.id);
+                      const result = await addManyToCartAction(ids);
+                      setCartCount(result.count);
+                      setMessage(result.added > 0 ? `${result.added} ürün sepetinize eklendi.` : result.messages.join(" "));
+                    })
+                  }
+                >
+                  {pending ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : <ShoppingBag className="size-4" aria-hidden="true" />}
+                  Seçimleri sepete ekle
+                </button>
+              )}
               {message ? (
                 <p className="mt-3 text-sm font-semibold text-caramel-300">
                   {message}{" "}

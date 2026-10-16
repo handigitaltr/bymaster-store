@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { ACTIVE_PRODUCT } from "@/lib/catalog";
 import { db } from "@/lib/db";
 import { absoluteUrl } from "@/lib/env";
+import { STATIC_SITE } from "@/lib/site-mode";
 
 export const revalidate = 3600;
 
@@ -15,7 +16,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     db.page.findMany({ where: { status: "PUBLISHED", slug: { not: "hakkimizda" } }, select: { slug: true, updatedAt: true } }),
   ]);
 
-  const staticPaths = ["/", "/urunler", "/lezzet-dunyasi", "/tarifler", "/profesyonel", "/profesyonel/teklif", "/hakkimizda", "/iletisim", "/sss", "/siparis-takip"];
+  const staticPaths = [
+    "/",
+    "/urunler",
+    "/lezzet-dunyasi",
+    "/tarifler",
+    "/profesyonel",
+    "/hakkimizda",
+    "/sss",
+    // Statik vitrinde formlar ve sipariş takibi yoktur
+    ...(STATIC_SITE ? [] : ["/profesyonel/teklif", "/iletisim", "/siparis-takip"]),
+  ];
 
   return [
     ...staticPaths.map((path) => ({ url: absoluteUrl(path), lastModified: now, changeFrequency: "weekly" as const, priority: path === "/" ? 1 : 0.7 })),

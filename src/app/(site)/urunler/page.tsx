@@ -6,6 +6,7 @@ import { CatalogView } from "@/components/catalog/CatalogView";
 import { browseCatalog, getActiveCategories } from "@/lib/catalog";
 import { parseCatalogParams } from "@/lib/catalog-params";
 import { pageMetadata } from "@/lib/seo";
+import { STATIC_SITE } from "@/lib/site-mode";
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
@@ -17,7 +18,8 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function ProductsPage({ searchParams }: Props) {
-  const catalogParams = parseCatalogParams(await searchParams);
+  // Statik vitrinde sayfa derleme anında üretilir; adres parametreleri (filtre, sıralama) okunamaz ve tüm ürünler listelenir
+  const catalogParams = parseCatalogParams(STATIC_SITE ? {} : await searchParams);
   const [result, categories] = await Promise.all([
     browseCatalog({
       categorySlug: catalogParams.kategori || undefined,
@@ -27,6 +29,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       inStock: catalogParams.stok,
       sort: catalogParams.sirala,
       page: catalogParams.sayfa,
+      pageSize: STATIC_SITE ? 500 : undefined,
     }),
     getActiveCategories(),
   ]);
@@ -36,7 +39,11 @@ export default async function ProductsPage({ searchParams }: Props) {
       <CatalogHeader
         eyebrow="Katalog"
         title="Tüm Ürünler"
-        description="Soslardan süslemelere, karışımlardan evde tatlı kitlerine ByMaster kataloğu. Lezzet ailesine, kullanım alanına ve ambalaja göre daraltın."
+        description={
+          STATIC_SITE
+            ? "Soslardan süslemelere, karışımlardan evde tatlı kitlerine ByMaster kataloğu. Kategorilere göre göz atın."
+            : "Soslardan süslemelere, karışımlardan evde tatlı kitlerine ByMaster kataloğu. Lezzet ailesine, kullanım alanına ve ambalaja göre daraltın."
+        }
         crumbs={[{ name: "Ürünler", path: "/urunler" }]}
       >
         <Link href="/lezzet-dunyasi#lezzet-haritasi" className="group mt-6 inline-flex items-center gap-2 text-sm font-bold text-bordeaux-600">

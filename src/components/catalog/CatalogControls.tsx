@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { GitCompareArrows, SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
 import { Dialog } from "@/components/ui/Dialog";
+import { STATIC_SITE } from "@/lib/site-mode";
 import { COMPARE_KEY, COMPARE_MAX, useStoredList } from "@/lib/use-stored-list";
 
 const SORT_LABELS: Record<string, string> = {
@@ -83,7 +84,7 @@ export function MobileFilterButton({ activeCount, children }: { activeCount: num
 }
 
 /** Karşılaştırmaya eklenen ürünler için sabit alt çubuk */
-export function CompareBar() {
+function CompareBarInner() {
   const compare = useStoredList(COMPARE_KEY, COMPARE_MAX);
   if (compare.list.length === 0) return null;
   return (
@@ -101,4 +102,9 @@ export function CompareBar() {
       </Link>
     </div>
   );
+}
+
+/** Statik vitrinde (GitHub Pages) sunucu gerektirdiği için gösterilmez */
+export function CompareBar() {
+  return STATIC_SITE ? null : <CompareBarInner />;
 }

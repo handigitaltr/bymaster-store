@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { absoluteUrl, env } from "@/lib/env";
 
+// Derleme anında üretilir (statik vitrin dışa aktarımı da bunu gerektirir)
+export const dynamic = "force-static";
+
 export default function robots(): MetadataRoute.Robots {
   if (env.NOINDEX) return { rules: [{ userAgent: "*", disallow: "/" }] };
   return {

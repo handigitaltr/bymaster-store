@@ -74,4 +74,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// GitHub Pages için statik vitrin (scripts/build-pages.mjs, NEXT_PUBLIC_STATIC_SITE=1): sunucusuz HTML çıktısı.
+// Statik barındırmada başlık (headers) tanımlanamaz ve görsel optimizasyonu yoktur.
+const staticSiteConfig: NextConfig = {
+  output: "export",
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
+  trailingSlash: true,
+  poweredByHeader: false,
+  reactStrictMode: true,
+  images: { loader: "custom", loaderFile: "./src/lib/static-image-loader.ts" },
+};
+
+export default process.env.NEXT_PUBLIC_STATIC_SITE === "1" ? staticSiteConfig : nextConfig;
